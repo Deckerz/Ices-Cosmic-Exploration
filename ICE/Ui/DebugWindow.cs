@@ -604,7 +604,7 @@ internal class DebugWindow : Window
     {
         var itemName = ExcelHelper.ItemSheet;
 
-        if (ImGui.BeginTable("Gathering Mission Dictionary", 10, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.Resizable))
+        if (ImGui.BeginTable("Gathering Mission Dictionary", 10, ImGuiTableFlags.RowBg | ImGuiTableFlags.Borders | ImGuiTableFlags.SizingFixedFit))
         {
             ImGui.TableSetupColumn("MissionId");
             ImGui.TableSetupColumn("Mission Name");

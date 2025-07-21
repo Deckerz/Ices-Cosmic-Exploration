@@ -58,7 +58,6 @@ namespace ICE.Scheduler.Tasks
                     }
                 }
             }
-
             if (C.StopOnceHitLunarCredits)
             {
                 if (TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
@@ -71,7 +70,6 @@ namespace ICE.Scheduler.Tasks
                     }
                 }
             }
-
             if (C.StopOnceHitCosmicScore)
             {
                 var (classScore, _, _, _) = MissionHandler.GetCosmicClassScores();
@@ -82,7 +80,6 @@ namespace ICE.Scheduler.Tasks
                     return;
                 }
             }
-
             if (Player.Level >= C.TargetLevel && C.StopWhenLevel)
             {
                 DuoLog.Information($"Stopping the plugin as you have reached level {C.TargetLevel}");

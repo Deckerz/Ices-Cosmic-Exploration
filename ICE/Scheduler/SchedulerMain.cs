@@ -62,7 +62,7 @@ namespace ICE.Scheduler
         // </summary>
         internal static void Tick()
         {
-            if (Throttles.GenericThrottle && P.TaskManager.Tasks.Count == 0 && State != Idle)
+            if (Throttles.GenericThrottle && P.TaskManager.NumQueuedTasks == 0 && State != Idle)
             {
                 switch (State)
                 {
@@ -104,52 +104,8 @@ namespace ICE.Scheduler
                         break;
                 }
             }
-            /* switch (State)
-            {
-                case IceState.Idle:
-                    break;
-                case IceState.Gamba:
-                    TaskGamba.TryHandleGamba();
-                    break;
-                case IceState.AnimationLock:
-                    TaskAnimationLock.Enqueue();
-                    break;
-                case IceState.RepairMode:
-                    TaskRepair.GatherCheck();
-                    break;
-                case IceState.GrabbingMission:
-                    break;
-                case IceState.WaitForNonStandard:
-                    TaskMissionFind.WaitForNonStandard();
-                    break;
-                case IceState.GrabMission:
-                    TaskMissionFind.Enqueue();
-                    break;
-                case IceState.StartCraft:
-                    TaskCrafting.TryEnqueueCrafts();
-                    break;
-                case IceState.AbortInProgress:
-                case IceState.WaitForCrafts:
-                case IceState.CraftInProcess:
-                case IceState.CraftCheckScoreAndTurnIn:
-                    TaskScoreCheckCraft.TryCheckScore();
-                    break;
-                case IceState.GatherScoreandTurnIn:
-                    TaskScoreCheckGather.TryCheckScore();
-                    break;
-                case IceState.ManualMode:
-                    TaskManualMode.ZenMode();
-                    break;
-                case IceState.ResumeChecker:
-                    TaskMissionFind.EnqueueResumeCheck();
-                    break;
-                case IceState.GatherNormal:
-                    TaskGather.TryEnqueueGathering();
-                    break;
-                default:
-                    throw new Exception("Invalid state");
-            } */
         }
+
         public static void EnqueueResumeCheck()
         {
             State = Idle;
