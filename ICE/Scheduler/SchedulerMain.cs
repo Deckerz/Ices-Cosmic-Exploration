@@ -62,7 +62,7 @@ namespace ICE.Scheduler
         // </summary>
         internal static void Tick()
         {
-            if (Throttles.GenericThrottle && P.TaskManager.NumQueuedTasks == 0 && State != Idle)
+            if (Throttles.GenericThrottle && P.TaskManager.Tasks.Count == 0 && State != Idle)
             {
                 switch (State)
                 {
@@ -108,21 +108,29 @@ namespace ICE.Scheduler
 
         public static void EnqueueResumeCheck()
         {
+            // Start the check by making the state idle, this clears all flags.
             State = Idle;
             if (CosmicHelper.CurrentLunarMission != 0)
             {
+                // Mission was not 0, which means there's currently one active.
                 if (!AddonHelper.IsAddonActive("WKSMissionInfomation"))
                 {
-                    CosmicHelper.OpenStellarMission();
+                    P.TaskManager.Enqueue(() => CosmicHelper.OpenStellarMissionHud());
                     State = Start;
-                    return;
+                    return; // Makes sure that none of the other flags can be set, and returns back to start until the mission information is open
                 }
-                if (MissionHandler.IsMissionTimedOut())
-                    State |= AbortInProgress;
-                TaskMissionFind.UpdateStateFlags();
-                if (State.HasFlag(Craft) && P.Artisan.IsBusy())
-                    State |= Waiting;
-                State |= ScoringMission;
+                else
+                {
+                    // Checking for the mission, seeing if it's timed out. If so, then initiating the timeout sequence (aka trying to turnin/abort)
+                    if (MissionHandler.IsMissionTimedOut())
+                        State |= AbortInProgress;
+
+                    // Updating the flags for the state. 
+                    TaskMissionFind.UpdateStateFlags();
+                    if (State.HasFlag(Craft) && P.Artisan.IsBusy())
+                        State |= Waiting;
+                    State |= ScoringMission;
+                }
             }
             else if (AddonHelper.IsAddonActive("WKSLottery"))
                 State = Gambling;

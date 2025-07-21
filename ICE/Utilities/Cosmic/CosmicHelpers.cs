@@ -33,4 +33,22 @@ public static partial class CosmicHelper
             }
         }
     }
+
+    public static bool? OpenStellarMissionHud()
+    {
+        if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("MissionInfo", out var missionInfo) && missionInfo.IsAddonReady)
+        {
+            return true;
+        }
+        else if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
+        {
+            if (EzThrottler.Throttle("Opening Steller Mission Hud"))
+            {
+                IceLogging.Debug("Trying to open the steller mission information");
+                hud.Mission();
+            }
+        }
+
+        return false;
+    }
 }

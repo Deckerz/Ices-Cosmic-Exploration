@@ -41,11 +41,22 @@ namespace ICE.Scheduler.Tasks
 
         public static void Enqueue()
         {
+            // 
             if (SchedulerMain.AnimationLockAbandonState)
             {
                 SchedulerMain.State = IceState.AnimationLock;
                 return;
             }
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            // Checks to see if you've hit the following:
+            // Cosmocredits
+            // Lunarcredits
+            // Cosmo score
+            // Target Level
+            // Stopping after the current mission
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
             if (C.StopOnceHitCosmoCredits)
             {
                 if (TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
@@ -58,6 +69,7 @@ namespace ICE.Scheduler.Tasks
                     }
                 }
             }
+
             if (C.StopOnceHitLunarCredits)
             {
                 if (TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
@@ -70,6 +82,7 @@ namespace ICE.Scheduler.Tasks
                     }
                 }
             }
+
             if (C.StopOnceHitCosmicScore)
             {
                 var (classScore, _, _, _) = MissionHandler.GetCosmicClassScores();
@@ -80,10 +93,12 @@ namespace ICE.Scheduler.Tasks
                     return;
                 }
             }
+
             if (Player.Level >= C.TargetLevel && C.StopWhenLevel)
             {
                 DuoLog.Information($"Stopping the plugin as you have reached level {C.TargetLevel}");
                 SchedulerMain.DisablePlugin();
+                return;
             }
             if (SchedulerMain.StopBeforeGrab)
             {
@@ -92,14 +107,23 @@ namespace ICE.Scheduler.Tasks
             }
 
             if (!SchedulerMain.State.HasFlag(IceState.GrabMission))
+            {
+                // Don't know how we're here, but returning back to the start to make sure we're on the right path.
+                // Bad coding... I feel. 
                 return;
+            }
 
+            // Checking to see if you even HAVE any missions enabled to begin with. 
             if (!(HasCritical || HasWeather || HasTimed || HasSequence || HasStandard))
             {
                 DuoLog.Error($"No missions enabled for {Svc.ClientState.LocalPlayer?.ClassJob.Value.Name}. Did you forget to set me up?");
                 SchedulerMain.DisablePlugin();
                 return;
             }
+
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+            // All checks have been done, time to actually initiate the code
+            // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
             P.TaskManager.Enqueue(TaskRepair.GatherCheck, "Checking for repairs");
             P.TaskManager.Enqueue(TaskSpiritbond.TryExtractMateria, "Checking for materia");
@@ -203,6 +227,7 @@ namespace ICE.Scheduler.Tasks
             return true;
         }
 
+        // Buttons to call, debating on just making these voids but. To the same degree there's no true call on 
         internal unsafe static bool? CriticalButton()
         {
             if (EzThrottler.Throttle("WKSUIButton", 250))
@@ -213,7 +238,6 @@ namespace ICE.Scheduler.Tasks
                 }
             return false;
         }
-
         internal unsafe static bool? WeatherButton()
         {
             if (EzThrottler.Throttle("WKSUIButton", 250))
@@ -224,7 +248,6 @@ namespace ICE.Scheduler.Tasks
                 }
             return false;
         }
-
         internal unsafe static bool? BasicMissionButton()
         {
             if (MissionId != 0)
@@ -247,11 +270,12 @@ namespace ICE.Scheduler.Tasks
                 return true;
             }
 
-            if (EzThrottler.Throttle("OpenMissionFinder"))
-                if (TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
-                {
+            if (TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
+            {
+                if (EzThrottler.Throttle("OpenMissionFinder"))
                     hud.Mission();
-                }
+            }
+
             return false;
         }
 
@@ -304,10 +328,11 @@ namespace ICE.Scheduler.Tasks
                     var sequenceIds = C.Missions.Where(x => x.Type == MissionType.Sequential).Select(s => s.Id).ToHashSet();
                     var timedIds = C.Missions.Where(x => x.Type == MissionType.Timed).Select(t => t.Id).ToHashSet();
 
-                    var weatherMissions = x.StellerMissions.Where(m => !timedIds.Contains(m.MissionId) && !sequenceIds.Contains(m.MissionId));
-                    var timedMissions = x.StellerMissions.Where(m => !weatherIds.Contains(m.MissionId) && !sequenceIds.Contains(m.MissionId));
-                    var sequenceMissions = x.StellerMissions.Where(m => !weatherIds.Contains(m.MissionId) && !timedIds.Contains(m.MissionId));
+                    var weatherMissions = x.StellerMissions.Where(m => !timedIds.Contains(m.MissionId) && !sequenceIds.Contains(m.MissionId)); // missions that aren't sequence or timed
+                    var timedMissions = x.StellerMissions.Where(m => !weatherIds.Contains(m.MissionId) && !sequenceIds.Contains(m.MissionId)); // missions that aren't sequence or weather
+                    var sequenceMissions = x.StellerMissions.Where(m => !weatherIds.Contains(m.MissionId) && !timedIds.Contains(m.MissionId)); // missions that aren't timed or weather
 
+                    // Order of the default priority is Sequence -> Timed -> Weather
                     var priorityMissions = new List<(int prio, IEnumerable<WKSMission.StellarMissions> missions)>
                     {
                         (C.SequenceMissionPriority, sequenceMissions),

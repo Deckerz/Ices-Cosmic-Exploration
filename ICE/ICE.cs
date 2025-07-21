@@ -1,11 +1,10 @@
 using ECommons.Automation.NeoTaskManager;
 using ECommons.Configuration;
-using ICE.Scheduler;
 using ICE.Ui;
 using ICE.IPC;
-using ICE.Scheduler.Handlers;
 using System.Collections.Generic;
 using static ICE.Utilities.CosmicHelper;
+using Pictomancy;
 
 namespace ICE;
 
@@ -40,6 +39,7 @@ public sealed partial class ICE : IDalamudPlugin
     {
         P = this;
         ECommonsMain.Init(pi, P, Module.DalamudReflector, ECommons.Module.ObjectFunctions);
+        PictoService.Initialize(pi);
 
         EzConfig.Migrate<Config>();
         Config = EzConfig.Init<Config>();
@@ -119,6 +119,7 @@ public sealed partial class ICE : IDalamudPlugin
         GenericHelpers.Safe(TextAdvancedManager.UnlockTA);
         GenericHelpers.Safe(YesAlreadyManager.Unlock);
         ECommonsMain.Dispose();
+        PictoService.Dispose();
     }
 
     private void OnCommand(string command, string args)
