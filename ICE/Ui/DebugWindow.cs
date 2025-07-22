@@ -36,7 +36,7 @@ internal class DebugWindow : Window
                                    "Wheel of fortune!", "Moon Recipe Hud", 
                                    "Moon Mission Info", "Crafting Table", "Gathering Table", 
                                    "Test Buttons", "IPC Testing", 
-                                   "Map Test"];
+                                   "Map Test", "Gather Editor"];
 
     int selectedDebugIndex = 0; // This should be stored somewhere persistent
 
@@ -80,6 +80,7 @@ internal class DebugWindow : Window
                 case 9: TestButtons.Draw(); break;
                 case 10: IPCTesting.Draw(); break;
                 case 11: MapTesting.Draw(); break;
+                case 12: GatheringViewer.Draw(); break;
                 default: ImGui.Text("Unknown Debug View"); break;
             }
 

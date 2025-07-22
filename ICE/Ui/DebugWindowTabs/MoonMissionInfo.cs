@@ -148,6 +148,12 @@ namespace ICE.Ui.DebugWindowTabs
                         {
                             Utils.SetGatheringRing(entry.Value.TerritoryId, entry.Value.X, entry.Value.Y, entry.Value.Radius);
                         }
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.Text($"X: {entry.Value.X} | Y: {entry.Value.Y}");
+                            ImGui.EndTooltip();
+                        }
                     }
                 }
 

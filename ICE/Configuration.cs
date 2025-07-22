@@ -4,7 +4,7 @@ using ECommons.Configuration;
 
 namespace ICE
 {
-    public class Config : IEzConfig
+    public class Configuration : IEzConfig
     {
         [JsonIgnore]
         public const int CurrentConfigVersion = 1;
