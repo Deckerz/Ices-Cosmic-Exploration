@@ -15,6 +15,7 @@ namespace ICE.Scheduler.Tasks
                 {
                     P.TaskManager.Enqueue(() => OpenSelfRepair(), "Opening repair menu");
                     P.TaskManager.Enqueue(() => SelfRepair(), "Repairing self");
+                    // P.TaskManager.Enqueue(() => CloseRepair(), "Closing Repair Window");
                 }
             }
         }
@@ -53,6 +54,27 @@ namespace ICE.Scheduler.Tasks
                     ECommons.Automation.Callback.Fire(addon2, true, 0);
                 }
             }
+            return false;
+        }
+
+        internal unsafe static bool CloseRepair()
+        {
+            if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("Repair", out var repairWindow))
+            {
+                if (GenericHelpers.IsAddonReady(repairWindow))
+                {
+                    if (EzThrottler.Throttle("GlobalTurnInGenericThrottle", 300))
+                    {
+                        Svc.Log.Debug("Repair Close Window");
+                        ECommons.Automation.Callback.Fire(repairWindow, true, 0);
+                    }
+                }
+                else
+                {
+                    return true;
+                }
+            }
+
             return false;
         }
     }

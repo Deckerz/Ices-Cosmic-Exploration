@@ -114,7 +114,7 @@ namespace ICE.Scheduler.Tasks
             else
             {
                 IceLogging.Debug("[Score Checker] Addon not ready or player is busy");
-                CosmicHelper.OpenStellarMission();
+                CosmicHelper.OpenStellarMissionHud();
             }
         }
     }

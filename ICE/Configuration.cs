@@ -90,6 +90,10 @@ namespace ICE
         // Misc settings
         public bool EnableAutoSprint { get; set; } = true;
 
+        public bool XPRelicGrind { get; set; } = false;
+        public bool XPRelicIgnoreManual { get; set; } = false;
+        public bool XPRelicOnlyEnabled { get; set; } = false;
+
         public void Save()
         {
             EzConfig.Save();

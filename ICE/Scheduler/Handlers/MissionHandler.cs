@@ -110,7 +110,7 @@ internal static class MissionHandler
         }
         else
         {
-            CosmicHelper.OpenStellarMission();
+            CosmicHelper.OpenStellarMissionHud();
         }
 
         return (currentScore, bronzeScore, silverScore, goldScore);
@@ -127,7 +127,7 @@ internal static class MissionHandler
         }
         else
         {
-            CosmicHelper.OpenStellarMission();
+            CosmicHelper.OpenStellarMissionHud();
         }
         return false;
     }
@@ -259,7 +259,7 @@ internal static class MissionHandler
             }
             else
             {
-                CosmicHelper.OpenStellarMission();
+                CosmicHelper.OpenStellarMissionHud();
                 return false;
             }
         }

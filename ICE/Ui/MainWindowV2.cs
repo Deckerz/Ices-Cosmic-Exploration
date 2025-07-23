@@ -270,6 +270,35 @@ namespace ICE.Ui
                 ImGui.Separator();
 
                 ImGui.Dummy(new(0, 10));
+
+                bool EnableRelicXp = C.XPRelicGrind;
+                if (ImGui.Checkbox("Auto-Pick For Relic XP", ref EnableRelicXp))
+                {
+                    C.XPRelicGrind = EnableRelicXp;
+                    C.Save();
+                }
+                if (EnableRelicXp)
+                {
+                    bool IgnoreManual = C.XPRelicIgnoreManual;
+                    if (ImGui.Checkbox("Ignore Manual Mode Missions", ref IgnoreManual))
+                    {
+                        C.XPRelicIgnoreManual = IgnoreManual;
+                        C.Save();
+                    }
+
+                    bool OnlySelected = C.XPRelicOnlyEnabled;
+                    if (ImGui.Checkbox("Only selected missions", ref OnlySelected))
+                    {
+                        C.XPRelicOnlyEnabled = OnlySelected;
+                        C.Save();
+                    }
+                }
+
+                ImGui.Spacing();
+
+                ImGui.Separator();
+
+                ImGui.Dummy(new(0, 10));
                 if (ImGui.Checkbox("Auto Pick Current Job", ref autoPickCurrentJob))
                 {
                     C.AutoPickCurrentJob = autoPickCurrentJob;

@@ -16,5 +16,6 @@ namespace ICE.Enums
         AnimationLock = 512,
         Gambling = 1024,
         Waiting = 2048,
+        RelicTurnin = 4096,
     }
 }

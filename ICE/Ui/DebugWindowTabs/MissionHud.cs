@@ -9,6 +9,8 @@ namespace ICE.Ui.DebugWindowTabs
 {
     internal class MissionHud
     {
+        private static int BestMission = 0;
+
         public static void Draw()
         {
             if (GenericHelpers.TryGetAddonMaster<WKSMission>("WKSMission", out var x) && x.IsAddonReady)
@@ -60,6 +62,17 @@ namespace ICE.Ui.DebugWindowTabs
                         m.Select();
                     }
                 }
+
+                ImGui.Text($"Best Relic Mission: {BestMission}");
+                if (ImGui.Button("Update Best Mission"))
+                {
+                    if (TaskMissionFind.FindRelicMission() != null)
+                    {
+                        BestMission = 0;
+                        BestMission = TaskMissionFind.FindRelicMission().Value;
+                    }
+                }
+
 
             }
             else

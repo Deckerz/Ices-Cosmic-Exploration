@@ -71,7 +71,7 @@ namespace ICE.Scheduler.Tasks
             {
                 int currentIndex = SchedulerMain.CurrentIndex;
 
-                CosmicHelper.OpenStellarMission();
+                CosmicHelper.OpenStellarMissionHud();
                 var currentMission = CosmicHelper.CurrentLunarMission;
 
                 List<uint> MissionNodes = new List<uint>();
