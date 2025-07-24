@@ -24,19 +24,26 @@ public static partial class CosmicHelper
 
     public static void OpenStellarMission()
     {
-        if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady && !AddonHelper.IsAddonActive("WKSMissionInfomation"))
+        if (GenericHelpers.TryGetAddonMaster<WKSHud>("WKSHud", out var hud) && hud.IsAddonReady)
         {
-            if (EzThrottler.Throttle("Opening Stellar Missions"))
+            if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && missionInfo.IsAddonReady)
             {
-                IceLogging.Debug("Opening Mission Menu");
-                hud.Mission();
+                return;
+            }
+            else
+            {
+                if (EzThrottler.Throttle("Opening Stellar Missions"))
+                {
+                    IceLogging.Debug("Opening Mission Menu");
+                    hud.Mission();
+                }
             }
         }
     }
 
     public static bool? OpenStellarMissionHud()
     {
-        if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("MissionInfo", out var missionInfo) && missionInfo.IsAddonReady)
+        if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && missionInfo.IsAddonReady)
         {
             return true;
         }

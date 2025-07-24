@@ -140,22 +140,26 @@ namespace ICE.Scheduler.Tasks
             {
                 P.TaskManager.Enqueue(BasicMissionButton, "Selecting Basic Missions");
                 P.TaskManager.Enqueue(FindBestRelicXP, "Selecting Best Relic XP Mission");
+                P.TaskManager.Enqueue(FindResetMission, "Checking Reset for Relic XP");
             }
-            if (HasCritical)
+            else
             {
-                P.TaskManager.Enqueue(CriticalButton, "Selecting Critical Mission");
-                P.TaskManager.Enqueue(FindCriticalMission, "Checking to see if critical mission available");
-            }
-            if (HasWeather || HasTimed || HasSequence) // Skip Checks if enabled mission doesn't have weather, timed or sequence?
-            {
-                P.TaskManager.Enqueue(WeatherButton, "Selecting Weather");
-                P.TaskManager.Enqueue(FindWeatherMission, "Checking to see if weather mission avaialable");
-            }
-            if (HasStandard)
-            {
-                P.TaskManager.Enqueue(BasicMissionButton, "Selecting Basic Missions");
-                P.TaskManager.Enqueue(FindBasicMission, "Finding Basic Mission");
-                P.TaskManager.Enqueue(FindResetMission, "Checking for abandon mission");
+                if (HasCritical)
+                {
+                    P.TaskManager.Enqueue(CriticalButton, "Selecting Critical Mission");
+                    P.TaskManager.Enqueue(FindCriticalMission, "Checking to see if critical mission available");
+                }
+                if (HasWeather || HasTimed || HasSequence) // Skip Checks if enabled mission doesn't have weather, timed or sequence?
+                {
+                    P.TaskManager.Enqueue(WeatherButton, "Selecting Weather");
+                    P.TaskManager.Enqueue(FindWeatherMission, "Checking to see if weather mission avaialable");
+                }
+                if (HasStandard)
+                {
+                    P.TaskManager.Enqueue(BasicMissionButton, "Selecting Basic Missions");
+                    P.TaskManager.Enqueue(FindBasicMission, "Finding Basic Mission");
+                    P.TaskManager.Enqueue(FindResetMission, "Checking for abandon mission");
+                }
             }
             P.TaskManager.Enqueue(GrabMission, "Grabbing the mission");
             DelayMission();
@@ -434,30 +438,54 @@ namespace ICE.Scheduler.Tasks
 
                 if (TryGetAddonMaster<WKSMission>("WKSMission", out var x) && x.IsAddonReady)
                 {
-                    var bestMissionXp = FindRelicMission();
-                    if (bestMissionXp != null)
+                    var DRankMissions = C.Missions.Where(x => CosmicHelper.MissionInfoDict[x.Id].JobId == currentClassJob || CosmicHelper.MissionInfoDict[x.Id].JobId2 == currentClassJob).Where(x => x.Type == MissionType.Standard && CosmicHelper.MissionInfoDict[x.Id].Rank == 1);
+                    List<uint> MissionIds = new List<uint>();
+                    foreach (var entry in DRankMissions)
                     {
-                        foreach (var m in x.StellerMissions)
+                        IceLogging.Debug($"Adding {entry.Id}");
+                        MissionIds.Add(entry.Id);
+                    }
+                    bool CorrectTab = false;
+                    foreach (var m in x.StellerMissions)
+                    {
+                        if (MissionIds.Contains(m.MissionId))
                         {
-                            if (m.MissionId != bestMissionXp)
-                                continue;
-                            else
-                            {
-                                if (EzThrottler.Throttle($"Best mission is found [Mission XP]"))
-                                {
-                                    IceLogging.Debug($"Best XP Mission to find: {bestMissionXp}");
-                                    IceLogging.Debug($"Currently selecting mission from ui: {m.MissionId}");
-                                    SelectMission(m);
-                                    break;
-                                }
-                            }
+                            IceLogging.Debug($"Found: {m.MissionId}");
+                            CorrectTab = true;
+                            break;
                         }
                     }
 
-
-                    if (MissionId == 0)
-                        IceLogging.Debug("No mission was found to be optimal for xp. Continuing on");
-                    return true;
+                    if (!CorrectTab)
+                    {
+                        if (EzThrottler.Throttle("Tabbing over to the basic missions"))
+                            x.BasicMissions();
+                    }
+                    else
+                    {
+                        var bestMissionXp = FindRelicMission();
+                        if (bestMissionXp != null)
+                        {
+                            foreach (var m in x.StellerMissions)
+                            {
+                                if (m.MissionId != bestMissionXp)
+                                    continue;
+                                else
+                                {
+                                    if (EzThrottler.Throttle($"Best mission is found [Mission XP]"))
+                                    {
+                                        IceLogging.Debug($"Best XP Mission to find: {bestMissionXp}");
+                                        IceLogging.Debug($"Currently selecting mission from ui: {m.MissionId} | Name: {m.Name}");
+                                        SelectMission(m);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        if (MissionId == 0)
+                            IceLogging.Debug("No mission was found to be optimal for xp. Continuing on");
+                        return true;
+                    }
                 }
             }
             return false;

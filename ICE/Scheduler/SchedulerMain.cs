@@ -1,5 +1,6 @@
-using System.Collections.Generic;
 using Dalamud.Game.ClientState.Conditions;
+using System.Collections.Generic;
+using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
 using static ICE.Enums.IceState;
 
 namespace ICE.Scheduler
@@ -113,9 +114,9 @@ namespace ICE.Scheduler
             if (CosmicHelper.CurrentLunarMission != 0)
             {
                 // Mission was not 0, which means there's currently one active.
-                if (!AddonHelper.IsAddonActive("WKSMissionInfomation"))
+                if (GenericHelpers.TryGetAddonMaster<WKSMissionInfomation>("WKSMissionInfomation", out var missionInfo) && !missionInfo.IsAddonReady)
                 {
-                    P.TaskManager.Enqueue(() => CosmicHelper.OpenStellarMissionHud());
+                    CosmicHelper.OpenStellarMission();
                     State = Start;
                     return; // Makes sure that none of the other flags can be set, and returns back to start until the mission information is open
                 }
