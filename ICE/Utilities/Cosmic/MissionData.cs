@@ -26,16 +26,16 @@ public static unsafe partial class CosmicHelper
     #region Dictionaries
 
     /// <summary>
-    /// Some things to note that I didn't realize until after I really dug into the sheet a bit more/cleaned this up. <br></br>
-    /// Sheet is: WKSMissionUnit <br></br>
-    /// <b>- Row 0: Mission Name </b><br></br>
-    /// <b>- Row 2: JobId attached to the quest (so 9 is crp, 10 is Bsm... ect)</b><br></br>
-    /// <b>- Row 3: 2nd Required job???</b><br></br>
-    /// <b>- Row 4: 3rd Required job???</b><br></br>
-    /// <b>- Row 5: Bool -> Is it a critical mission?</b><br></br>
-    /// <b>- Row 6: Rank -> D = 1 | C = 2 | B = 3 | 4 = A-1 | 5 = A-2 | 6 = A-3</b>
-    /// <b>- Row 7: Mission time limit (seconds)
-    /// <b>- Row 18: Recipe # -> Corresponds to the recipeID that is in </b>
+    /// Some things to note that I didn't realize until after I really dug into the sheet a bit more/cleaned this up. <br />
+    /// Sheet is: WKSMissionUnit <br />
+    /// <b>- Row 0:</b> Mission Name <br />
+    /// <b>- Row 2:</b> JobId attached to the quest (so 9 is CRP, 10 is BSM, etc.) <br />
+    /// <b>- Row 3:</b> 2nd Required job??? <br />
+    /// <b>- Row 4:</b> 3rd Required job??? <br />
+    /// <b>- Row 5:</b> Bool → Is it a critical mission? <br />
+    /// <b>- Row 6:</b> Rank → D = 1 | C = 2 | B = 3 | 4 = A-1 | 5 = A-2 | 6 = A-3 <br />
+    /// <b>- Row 7:</b> Mission time limit (seconds) <br />
+    /// <b>- Row 18:</b> Recipe # → Corresponds to the RecipeID
     /// </summary>
     public class MissionListInfo
     {

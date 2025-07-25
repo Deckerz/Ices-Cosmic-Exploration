@@ -223,10 +223,18 @@ namespace ICE.Scheduler.Tasks
                                 }
                             }
                         }
+                        else if (Collectable || Reducable)
+                        {
+
+                        }
                         else if (x.CurrentIntegrity == 0)
                         {
                             P.TaskManager.Enqueue(() => IntegrityCheck(x));
                         }
+                    }
+                    else if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var gatherCollect) && gatherCollect.IsAddonReady)
+                    {
+
                     }
                 }
                 // Check the score
@@ -388,6 +396,24 @@ namespace ICE.Scheduler.Tasks
             P.TaskManager.Enqueue(() => !Svc.Condition[ConditionFlag.ExecutingGatheringAction], "Waiting for gathering attempt");
         }
 
+        private unsafe static void OpenItemCollectable(Gathering.GatheredItem item)
+        {
+            bool? IsCollectableOpen()
+            {
+                if (GenericHelpers.TryGetAddonMaster<GatheringMasterpiece>("GatheringMasterpiece", out var m) && m.IsAddonReady)
+                {
+                    return true;
+                }
+                else if (EzThrottler.Throttle($"Attempting to open collectable menu for {item.ItemName}"))
+                {
+                    item.Gather();
+                }
+
+                return false;
+            }
+
+            P.TaskManager.Enqueue(IsCollectableOpen, "Attempting to open the collectability menu");
+        }
 
         internal unsafe static bool? UpdateIndex(List<uint> MissionNodes)
         {
