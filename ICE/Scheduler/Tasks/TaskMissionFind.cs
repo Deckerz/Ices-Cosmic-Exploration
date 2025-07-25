@@ -2,6 +2,7 @@
 using ECommons.GameHelpers;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
 using ICE.Ui;
+using ICE.Ui.DebugWindowTabs;
 using Lumina.Excel.Sheets;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -616,22 +617,39 @@ namespace ICE.Scheduler.Tasks
 
             Dictionary<int, XPType> XPTable = new Dictionary<int, XPType>();
 
-            for (byte type = 1; type <= 4; type++)
+            if (!MissionHud.UseXPDebugger)
             {
-                if (!wksManager->Research->IsTypeAvailable(toolClassId, type))
-                    break;
-
-                var neededXP = wksManager->Research->GetNeededAnalysis(toolClassId, type);
-
-                var currentXp = wksManager->Research->GetCurrentAnalysis(toolClassId, type);
-                var requiredXp = neededXP - currentXp;
-                if (!XPTable.ContainsKey(type))
+                for (byte type = 1; type <= 4; type++)
                 {
-                    XPTable[type] = new XPType()
+                    if (!wksManager->Research->IsTypeAvailable(toolClassId, type))
+                        break;
+
+                    var neededXP = wksManager->Research->GetNeededAnalysis(toolClassId, type);
+
+                    var currentXp = wksManager->Research->GetCurrentAnalysis(toolClassId, type);
+                    var requiredXp = neededXP - currentXp;
+                    if (!XPTable.ContainsKey(type))
                     {
-                        CurrentXP = currentXp,
-                        NeededXP = neededXP,
-                    };
+                        XPTable[type] = new XPType()
+                        {
+                            CurrentXP = currentXp,
+                            NeededXP = neededXP,
+                        };
+                    }
+                }
+            }
+            else
+            {
+                foreach (var entry in MissionHud.DummyXPTest)
+                {
+                    if (entry.Value.NeededXP != 0)
+                    {
+                        XPTable[entry.Key] = new XPType()
+                        {
+                            CurrentXP = entry.Value.CurrentXP,
+                            NeededXP = entry.Value.NeededXP,
+                        };
+                    }
                 }
             }
 
@@ -640,7 +658,7 @@ namespace ICE.Scheduler.Tasks
             {
                 var bar = XPTable[i + 1];
                 urgencies[i + 1] = (bar.NeededXP > 0) ? 1f - ((float)bar.CurrentXP / bar.NeededXP) : 0f;
-                IceLogging.Info($"XP Type: {i+1} | Urgency: {urgencies[i + 1]}");
+                IceLogging.Debug($"XP Type: {i+1} | Urgency: {urgencies[i + 1]}");
             }
 
             Dictionary<uint, CosmicHelper.MissionListInfo> currentlyAvailable = new();
@@ -667,11 +685,14 @@ namespace ICE.Scheduler.Tasks
                 {
                     bool IgnoreManual = C.XPRelicIgnoreManual && missionConfig.ManualMode;
                     bool IgnoreNotEnabled = C.XPRelicOnlyEnabled && !missionConfig.Enabled;
-                    IceLogging.Info($"MissionID: {mission.Key} | Ignore Manual Mode: {C.XPRelicIgnoreManual} | Mission Manual Enabled: {missionConfig.ManualMode}");
+                    IceLogging.Debug($" - - - - - - - ");
+                    IceLogging.Debug($"MissionID: {mission.Key} \n " +
+                                     $"Ignore Manual Mode: {C.XPRelicIgnoreManual} | Mission Manual Enabled: {missionConfig.ManualMode} | Skipping? {IgnoreManual} \n" +
+                                     $"Only Enabled Mode: {C.XPRelicOnlyEnabled} | Mission is Enabled: {missionConfig.Enabled} | Skipping? {IgnoreNotEnabled}");
 
                     if (IgnoreManual)
                         continue;
-                    else if (IgnoreNotEnabled)
+                    if (IgnoreNotEnabled)
                         continue;
                     else
                     {
@@ -686,7 +707,7 @@ namespace ICE.Scheduler.Tasks
                 }
             }
 
-            IceLogging.Info($"Reward Dictionary Count: {rewardsDict.Count}");
+            IceLogging.Debug($"Reward Dictionary Count: {rewardsDict.Count}");
 
             int bestIndex = -1;
             float bestScore = float.NegativeInfinity;
@@ -696,28 +717,29 @@ namespace ICE.Scheduler.Tasks
                 int i = (int)kvp.Key;
                 var reward = kvp.Value;
                 float score = 0f;
-                IceLogging.Info($"Currently checking mission: {i}");
+                IceLogging.Debug($"Currently checking mission: {i}");
 
                 foreach (var rewardEntry in reward)
                 {
-                    IceLogging.Info($"Checking for value: {rewardEntry.Key}");
+                    IceLogging.Debug($"Checking for value: {rewardEntry.Key}");
                     if (urgencies.TryGetValue(rewardEntry.Key, out var urgency))
                     {
-                        IceLogging.Info($"Checking urgency for: {rewardEntry.Key}");
+                        IceLogging.Debug($"Checking urgency for: {rewardEntry.Key}");
                         score += urgency * rewardEntry.Value;
-                        IceLogging.Info($"Adding score: {urgency * rewardEntry.Value}");
+                        IceLogging.Debug($"Adding score: {urgency * rewardEntry.Value}");
                     }
                 }
 
                 if (score > bestScore)
                 {
-                    IceLogging.Info($"New Best Score: {bestScore}");
-                    IceLogging.Info($"Mission Number: {i}");
+                    IceLogging.Debug($"New Best Score: {bestScore}");
+                    IceLogging.Debug($"Mission Number: {i}");
                     bestScore = score;
                     bestIndex = i;
                 }
             }
 
+            IceLogging.Info($"Best relic xp has been completed. Best Relic Mission: {bestIndex}");
             return (bestIndex > 0) ? bestIndex : null;
         }
 
