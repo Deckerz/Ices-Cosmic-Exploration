@@ -128,6 +128,7 @@ public sealed partial class ICE : IDalamudPlugin
     private static void Init()
     {
         ExcelHelper.Init();
+        ConsumableInfo.Init();
     }
 
     private void Tick(object _)

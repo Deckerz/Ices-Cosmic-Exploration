@@ -669,8 +669,22 @@ namespace ICE.Scheduler.Tasks
                 {
                     if (CosmicHelper.MissionInfoDict.ContainsKey(mission.MissionId))
                     {
-                        var entry = CosmicHelper.MissionInfoDict[mission.MissionId];
-                        currentlyAvailable.TryAdd(mission.MissionId, entry);
+                        uint rank = CosmicHelper.MissionInfoDict[mission.MissionId].Rank;
+                        uint minLevel = 0;
+                        if (rank == 1)
+                            minLevel = 10;
+                        else if (rank == 2)
+                            minLevel = 50;
+                        else if (rank == 3)
+                            minLevel = 90;
+                        else // 
+                            minLevel = 100;
+
+                        if (minLevel <= PlayerHelper.GetLevel())
+                        {
+                            var entry = CosmicHelper.MissionInfoDict[mission.MissionId];
+                            currentlyAvailable.TryAdd(mission.MissionId, entry);
+                        }
                     }
                 }
             }
