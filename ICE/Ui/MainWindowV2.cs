@@ -796,7 +796,7 @@ namespace ICE.Ui
             Vector2 uv1 = state ? new Vector2(1, 1) : new Vector2(1 - cropAmount, 1 - cropAmount);
 
 
-            if (ImGui.ImageButton(icon.GetWrapOrEmpty().ImGuiHandle, size, uv0, uv1))
+            if (ImGui.ImageButton(icon.GetWrapOrEmpty().Handle, size, uv0, uv1))
             {
                 if (autoPickCurrentJob)
                 {
@@ -1373,13 +1373,13 @@ namespace ICE.Ui
         private unsafe void RelicXP()
         {
             var wksManager = WKSManager.Instance();
-            if (wksManager == null || wksManager->Research == null || !wksManager->Research->IsLoaded)
+            if (wksManager == null || wksManager->ResearchModule == null || !wksManager->ResearchModule->IsLoaded)
                 return;
 
             var job = selectedJob;
             var toolClassId = (byte)(job - 7);
-            var stage = wksManager->Research->CurrentStages[toolClassId - 1];
-            var nextstate = wksManager->Research->UnlockedStages[toolClassId - 1];
+            var stage = wksManager->ResearchModule->CurrentStages[toolClassId - 1];
+            var nextstate = wksManager->ResearchModule->UnlockedStages[toolClassId - 1];
 
             if (Svc.Data.GetExcelSheet<WKSCosmoToolClass>().TryGetRow(toolClassId, out var row))
             {
@@ -1390,14 +1390,14 @@ namespace ICE.Ui
 
             for (byte type = 1; type <= 4; type++)
             {
-                if (!wksManager->Research->IsTypeAvailable(toolClassId, type))
+                if (!wksManager->ResearchModule->IsTypeAvailable(toolClassId, type))
                     break;
 
-                var neededXP = wksManager->Research->GetNeededAnalysis(toolClassId, type);
+                var neededXP = wksManager->ResearchModule->GetNeededAnalysis(toolClassId, type);
 
-                var maxXP = wksManager->Research->GetMaxAnalysis(toolClassId, type);
+                var maxXP = wksManager->ResearchModule->GetMaxAnalysis(toolClassId, type);
 
-                var currentXp = wksManager->Research->GetCurrentAnalysis(toolClassId, type);
+                var currentXp = wksManager->ResearchModule->GetCurrentAnalysis(toolClassId, type);
                 if (!XPTable.ContainsKey(type))
                 {
                     XPTable[type] = new XPType()

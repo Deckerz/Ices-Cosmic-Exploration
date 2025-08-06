@@ -1217,6 +1217,8 @@ namespace ICE.Ui
                     .ToList();
                 ImGuiHelpers.ScaledDummy(5, 0);
                 ImGui.SameLine();
+                /*
+                // Currently doesn't work, was moreso set as a debug thing reguardless. Might revisit this in the future... maybe not
                 if (ImGui.CollapsingHeader("Provision Mission Priority"))
                 {
                     for (int i = 0; i < sorted.Count; i++)
@@ -1242,6 +1244,7 @@ namespace ICE.Ui
                         }
                     }
                 }
+                */
 
                 if (ImGui.Button("Get Sinus Forecast"))
                 {

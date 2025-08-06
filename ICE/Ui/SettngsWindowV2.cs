@@ -889,6 +889,7 @@ internal class SettingsWindowV2 : Window
             .Select((m, i) => new { Index = i, Name = m.name, Priority = m.get() })
             .OrderBy(m => m.Priority)
             .ToList();
+        /*
         ImGuiHelpers.ScaledDummy(5, 0);
         ImGui.SameLine();
         if (ImGui.CollapsingHeader("Provision Mission Priority"))
@@ -916,6 +917,7 @@ internal class SettingsWindowV2 : Window
                 }
             }
         }
+        */
 
         if (ImGui.Button("Get Sinus Forecast"))
         {

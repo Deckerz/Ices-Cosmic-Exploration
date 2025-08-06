@@ -21,25 +21,26 @@ public sealed partial class ICE
             Dictionary<ushort, int> PreCrafts = [];
             Dictionary<uint, int> GatherItems = [];
             uint keyId = item.RowId;
-            string LeveName = item.Item.ToString();
+            string LeveName = item.Name.ToString();
             LeveName = LeveName.Replace("<nbsp>", " ");
             LeveName = LeveName.Replace("<->", "");
 
             if (LeveName == "")
                 continue;
 
-            int JobId = item.Unknown1 - 1;
-            int Job2 = item.Unknown2;
-            if (item.Unknown2 != 0)
+
+            int JobId = (int)item.ClassJobCategory[0].RowId - 1;
+            int Job2 = (int)item.ClassJobCategory[1].RowId;
+            if (Job2 != 0)
             {
                 Job2 = Job2 - 1;
             }
-            uint timeLimit = item.Unknown3;
+            uint timeLimit = item.MissionTime;
             uint silver = item.SilverStarRequirement;
             uint gold = item.GoldStarRequirement;
-            uint previousMissionId = item.Unknown10;
+            uint previousMissionId = item.LockedBehind.RowId;
 
-            uint timeAndWeather = item.Unknown18;
+            uint timeAndWeather = item.WKSMissionLotterySpecialCond.RowId;
             uint time = 0;
             CosmicWeather weather = CosmicWeather.FairSkies;
             if (timeAndWeather <= 12)
@@ -51,15 +52,15 @@ public sealed partial class ICE
                 weather = (CosmicWeather)(timeAndWeather - 12);
             }
 
-            uint rank = item.Unknown17;
-            bool isCritical = item.Unknown20;
+            uint rank = item.LevelGroup;
+            bool isCritical = item.IsSpecialQuest;
 
-            uint RecipeId = item.WKSMissionRecipe;
+            uint RecipeId = item.WKSMissionRecipe.RowId;
 
-            uint toDoValue = item.Unknown7;
+            uint toDoValue = item.MissionToDo[0].RowId;
 
-            var todo = ToDoSheet.GetRow((uint)(item.Unknown7 + *((byte*)wk + 0xC62)));
-            uint missionText = todo.Unknown19;
+            var todo = ToDoSheet.GetRow((uint)(toDoValue + *((byte*)wk + 0xC62)));
+            uint missionText = todo.WKSMissionText.Value.RowId;
             var marker = MarkerSheet.GetRow(todo.Unknown13);
             uint territoryId = 1237; // TODO: Make this set the correct territoryId once new planets are added and we figure out where it is.
 
@@ -110,7 +111,7 @@ public sealed partial class ICE
                 if (isCritical) // Criticals are sus
                 {
                     UInt16 item1Amount = 1; // It's a pass/fail progress, you need to go till you are full on score
-                    var item1RecipeRow = RecipeSheet.Where(e => e.RowId == MoonRecipeSheet.GetRow(item.WKSMissionRecipe).Recipe[0].Value.RowId).First();
+                    var item1RecipeRow = RecipeSheet.Where(e => e.RowId == MoonRecipeSheet.GetRow(item.WKSMissionRecipe.RowId).Recipe[0].Value.RowId).First();
                     var item1Id = item1RecipeRow.ItemResult.RowId;
                     var item1Name = ItemSheet.GetRow(item1Id).Name.ToString();
                     var craftingType = item1RecipeRow.CraftType.Value.RowId;
@@ -118,10 +119,10 @@ public sealed partial class ICE
                     var item1RecipeId = item1RecipeRow.RowId;
                     MainItems.Add(((ushort)item1RecipeId), item1Amount);
                 }
-                if (toDoRow.Unknown3 != 0 && !isCritical) // shouldn't be 0, 1st item entry
+                if (toDoRow.RequiredItem[0].RowId != 0 && !isCritical) // shouldn't be 0, 1st item entry
                 {
-                    var item1Amount = toDoRow.Unknown6;
-                    var item1Id = MoonItemInfoSheet.GetRow(toDoRow.Unknown3).Item;
+                    var item1Amount = toDoRow.RequiredItemQuantity[0]; // unknown 6
+                    var item1Id = MoonItemInfoSheet.GetRow(toDoRow.RequiredItem[0].RowId).Item.RowId;
                     var item1Name = ItemSheet.GetRow(item1Id).Name.ToString();
                     var item1RecipeRow = RecipeSheet.Where(e => e.ItemResult.RowId == item1Id)
                                                     .Where(e => e.RowId == MoonRecipeSheet.GetRow(RecipeId).Recipe[0].Value.RowId ||
@@ -153,10 +154,10 @@ public sealed partial class ICE
                     var item1RecipeId = item1RecipeRow.RowId;
                     MainItems.Add(((ushort)item1RecipeId), item1Amount);
                 }
-                if (toDoRow.Unknown4 != 0) // 2nd item entry
+                if (toDoRow.RequiredItem[1].RowId != 0) // 2nd item entry
                 {
-                    var item2Amount = toDoRow.Unknown7;
-                    var item2Id = MoonItemInfoSheet.GetRow(toDoRow.Unknown4).Item;
+                    var item2Amount = toDoRow.RequiredItemQuantity[1];
+                    var item2Id = MoonItemInfoSheet.GetRow(toDoRow.RequiredItem[1].RowId).Item.RowId;
                     var item2Name = ItemSheet.GetRow(item2Id).Name.ToString();
 
                     var item2RecipeRow = RecipeSheet.Where(e => e.ItemResult.RowId == item2Id)
@@ -188,10 +189,10 @@ public sealed partial class ICE
                     var item2RecipeId = item2RecipeRow.RowId;
                     MainItems.Add(((ushort)item2RecipeId), item2Amount);
                 }
-                if (toDoRow.Unknown5 != 0) // 3rd item entry
+                if (toDoRow.RequiredItem[2].RowId != 0) // 3rd item entry
                 {
-                    var item3Amount = toDoRow.Unknown8;
-                    var item3Id = MoonItemInfoSheet.GetRow(toDoRow.Unknown5).Item;
+                    var item3Amount = toDoRow.RequiredItemQuantity[2];
+                    var item3Id = MoonItemInfoSheet.GetRow(toDoRow.RequiredItem[2].RowId).Item.RowId;
                     var item3Name = ItemSheet.GetRow(item3Id).Name.ToString();
 
                     var item3RecipeRow = RecipeSheet.Where(e => e.ItemResult.RowId == item3Id)
@@ -250,28 +251,28 @@ public sealed partial class ICE
             {
                 var todoRow = ToDoSheet.GetRow(toDoValue);
 
-                if (todoRow.Unknown3 != 0) // First item in the gathering list. Shouldn't be 0...
+                if (todoRow.RequiredItem[0].RowId != 0) // First item in the gathering list. Shouldn't be 0...
                 {
-                    var minAmount = todoRow.Unknown6.ToInt();
-                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.Unknown3).Item;
+                    var minAmount = todoRow.RequiredItemQuantity[0].ToInt();
+                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.RequiredItem[0].RowId).Item.RowId;
                     if (!GatherItems.ContainsKey(itemInfoId))
                     {
                         GatherItems.Add(itemInfoId, minAmount);
                     }
                 }
-                if (todoRow.Unknown4 != 0) // First item in the gathering list. Shouldn't be 0...
+                if (todoRow.RequiredItem[1].RowId != 0) // First item in the gathering list. Shouldn't be 0...
                 {
-                    var minAmount = todoRow.Unknown7.ToInt();
-                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.Unknown4).Item;
+                    var minAmount = todoRow.RequiredItemQuantity[1].ToInt();
+                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.RequiredItem[1].RowId).Item.RowId;
                     if (!GatherItems.ContainsKey(itemInfoId))
                     {
                         GatherItems.Add(itemInfoId, minAmount);
                     }
                 }
-                if (todoRow.Unknown5 != 0) // First item in the gathering list. Shouldn't be 0...
+                if (todoRow.RequiredItem[2].RowId != 0) // First item in the gathering list. Shouldn't be 0...
                 {
-                    var minAmount = todoRow.Unknown8.ToInt();
-                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.Unknown5).Item;
+                    var minAmount = todoRow.RequiredItemQuantity[2].ToInt();
+                    var itemInfoId = MoonItemInfoSheet.GetRow(todoRow.RequiredItem[2].RowId).Item.RowId;
                     if (!GatherItems.ContainsKey(itemInfoId))
                     {
                         GatherItems.Add(itemInfoId, minAmount);
@@ -289,7 +290,7 @@ public sealed partial class ICE
 
             if (GatheringJobList.Contains(JobId) && CrafterJobList.Contains(Job2))
             {
-                var MissionRecipe = item.WKSMissionRecipe;
+                var MissionRecipe = item.WKSMissionRecipe.RowId;
                 var DualRecipeId = MoonRecipeSheet.GetRow(MissionRecipe).Recipe[0].Value.RowId;
                 var Recipe = RecipeSheet.GetRow(DualRecipeId);
                 var MainItem = Recipe.ItemResult.Value.RowId;

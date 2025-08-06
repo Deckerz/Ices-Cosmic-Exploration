@@ -35,7 +35,7 @@ public static unsafe class Utils
 
         Vector2 pos = MapToWorld(new Vector2(x, y), map.SizeFactor, map.OffsetX, map.OffsetY);
 
-        agent->IsFlagMarkerSet = false;
+        agent->FlagMarkerCount = 0;
         agent->SetFlagMapMarker(territoryId, map.RowId, pos.X, pos.Y);
         agent->OpenMapByMapId(map.RowId, territoryId);
     }
@@ -106,7 +106,8 @@ public static unsafe class Utils
         Vector2 pos = MapToWorld(new Vector2(x, y), map.SizeFactor, map.OffsetX, map.OffsetY);
         IceLogging.Debug($"Current map: {map.RowId} {territoryId} | {map.PlaceName.Value.Name} | {pos.X} {pos.Y} | {x} {y} | {radius} | {tooltip}");
 
-        agent->IsFlagMarkerSet = false;
+        agent->FlagMarkerCount = 0;
+        // agent->IsFlagMarkerSet = false;
         agent->SetFlagMapMarker(territoryId, map.RowId, x, y);
         agent->TempMapMarkerCount = 0;
         agent->AddGatheringTempMarker(x, y, radius, tooltip: tooltip);

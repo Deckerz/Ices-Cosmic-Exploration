@@ -602,13 +602,13 @@ namespace ICE.Scheduler.Tasks
         {
             uint? currentJobId = PlayerHelper.GetClassJobId().Value;
             var wksManager = WKSManager.Instance();
-            if (wksManager == null || wksManager->Research == null || !wksManager->Research->IsLoaded)
+            if (wksManager == null || wksManager->ResearchModule == null || !wksManager->ResearchModule->IsLoaded)
                 return null;
 
             var job = currentJobId;
             var toolClassId = (byte)(job - 7);
-            var stage = wksManager->Research->CurrentStages[toolClassId - 1];
-            var nextstate = wksManager->Research->UnlockedStages[toolClassId - 1];
+            var stage = wksManager->ResearchModule->CurrentStages[toolClassId - 1];
+            var nextstate = wksManager->ResearchModule->UnlockedStages[toolClassId - 1];
 
             if (Svc.Data.GetExcelSheet<WKSCosmoToolClass>().TryGetRow(toolClassId, out var row))
             {
@@ -621,12 +621,12 @@ namespace ICE.Scheduler.Tasks
             {
                 for (byte type = 1; type <= 4; type++)
                 {
-                    if (!wksManager->Research->IsTypeAvailable(toolClassId, type))
+                    if (!wksManager->ResearchModule->IsTypeAvailable(toolClassId, type))
                         break;
 
-                    var neededXP = wksManager->Research->GetNeededAnalysis(toolClassId, type);
+                    var neededXP = wksManager->ResearchModule->GetNeededAnalysis(toolClassId, type);
 
-                    var currentXp = wksManager->Research->GetCurrentAnalysis(toolClassId, type);
+                    var currentXp = wksManager->ResearchModule->GetCurrentAnalysis(toolClassId, type);
                     var requiredXp = neededXP - currentXp;
                     if (!XPTable.ContainsKey(type))
                     {
@@ -803,7 +803,7 @@ namespace ICE.Scheduler.Tasks
                         }
                     }
                     else
-                        Callback.Fire(x.Base, true, 13, MissionId); // Firing off to initiate quest
+                        ECommons.Automation.Callback.Fire(x.Base, true, 13, MissionId); // Firing off to initiate quest
                 }
                 else if (!AddonHelper.IsAddonActive("WKSMission"))
                 {

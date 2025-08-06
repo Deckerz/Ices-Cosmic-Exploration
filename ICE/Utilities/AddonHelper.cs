@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using FFXIVClientStructs.FFXIV.Client.UI;
+﻿using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Lumina.Excel.Sheets;
+using System.Collections.Generic;
 
 namespace ICE.Utilities;
 
@@ -21,23 +20,12 @@ public static class AddonHelper
         return addon != null && addon->IsVisible && addon->IsReady;
     }
 
-    public static unsafe bool IsNodeVisible(string addonName, params int[] ids)
-    {
-        var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
-        if (ptr == nint.Zero)
-            return false;
-
-        var addon = (AtkUnitBase*)ptr;
-        var node = GetNodeByIDChain(addon->GetRootNode(), ids);
-        return node != null && node->IsVisible();
-    }
-
     public static unsafe string GetNodeText(string addonName, params int[] nodeNumbers)
     {
 
         var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
 
-        var addon = (AtkUnitBase*)ptr;
+        var addon = (AtkUnitBase*)ptr.Address;
         var uld = addon->UldManager;
 
         AtkResNode* node = null;
@@ -69,7 +57,7 @@ public static class AddonHelper
 
         var ptr = Svc.GameGui.GetAddonByName(addonName, 1);
 
-        var addon = (AtkUnitBase*)ptr;
+        var addon = (AtkUnitBase*)ptr.Address;
         var uld = addon->UldManager;
 
         AtkResNode* node = null;

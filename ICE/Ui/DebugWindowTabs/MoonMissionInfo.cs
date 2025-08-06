@@ -72,12 +72,12 @@ namespace ICE.Ui.DebugWindowTabs
                     Vector2 size = new Vector2(20, 20);
 
                     ISharedImmediateTexture? icon = CosmicHelper.JobIconDict[entry.Value.JobId];
-                    ImGui.Image(icon.GetWrapOrEmpty().ImGuiHandle, size);
+                    ImGui.Image(icon.GetWrapOrEmpty().Handle, size);
                     if (entry.Value.JobId2 != 0)
                     {
                         ImGui.SameLine();
                         ISharedImmediateTexture? icon2 = CosmicHelper.JobIconDict[entry.Value.JobId2];
-                        ImGui.Image(icon2.GetWrapOrEmpty().ImGuiHandle, size);
+                        ImGui.Image(icon2.GetWrapOrEmpty().Handle, size);
                     }
 
                     // Mission Name

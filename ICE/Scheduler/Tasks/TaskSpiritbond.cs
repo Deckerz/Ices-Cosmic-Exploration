@@ -73,7 +73,7 @@ namespace ICE.Scheduler.Tasks
                     return false;
 
                 if (spiritbondTextNode->NodeText.ToString().Replace(" ", string.Empty) == "100%")
-                    Callback.Fire(addonMaterialize, true, 2, 0);
+                    ECommons.Automation.Callback.Fire(addonMaterialize, true, 2, 0);
             }
             else
             {

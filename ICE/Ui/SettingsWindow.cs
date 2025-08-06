@@ -799,6 +799,7 @@ internal class SettingsWindow : Window
         ImGui.Checkbox("Force OOM Sub", ref SchedulerMain.DebugOOMSub);
         ImGui.Checkbox("Legacy Failsafe WKSRecipe Select", ref C.FailsafeRecipeSelect);
 
+        
         var missionMap = new List<(string name, Func<byte> get, Action<byte> set)>
                 {
                     ("Sequence Missions", new Func<byte>(() => C.SequenceMissionPriority), new Action<byte>(v => { C.SequenceMissionPriority = v; C.Save(); })),
@@ -810,8 +811,10 @@ internal class SettingsWindow : Window
             .Select((m, i) => new { Index = i, Name = m.name, Priority = m.get() })
             .OrderBy(m => m.Priority)
             .ToList();
+        /*
         ImGuiHelpers.ScaledDummy(5, 0);
         ImGui.SameLine();
+
         if (ImGui.CollapsingHeader("Provision Mission Priority"))
         {
             for (int i = 0; i < sorted.Count; i++)
@@ -837,6 +840,7 @@ internal class SettingsWindow : Window
                 }
             }
         }
+        */
 
         if (ImGui.Button("Get Sinus Forecast"))
         {

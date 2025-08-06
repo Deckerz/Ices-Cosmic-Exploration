@@ -19,7 +19,7 @@ namespace ICE.Scheduler.Handlers
         {
             if (GenericHelpers.TryGetAddonByName<AtkUnitBase>(AddonName, out var addon) && GenericHelpers.IsAddonReady(addon))
             {
-                Callback.Fire(addon, visibilty, callback_fires.Cast<object>().ToArray());
+                ECommons.Automation.Callback.Fire(addon, visibilty, callback_fires.Cast<object>().ToArray());
                 return true;
             }
             return false;
