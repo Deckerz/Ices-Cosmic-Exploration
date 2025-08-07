@@ -32,7 +32,8 @@ namespace ICE.Ui.DebugWindowTabs
             if (GenericHelpers.TryGetAddonMaster<WKSMission>("WKSMission", out var x) && x.IsAddonReady)
             {
                 ImGui.Text("List of Visible Missions");
-                ImGui.Text($"Selected Mission: {x.SelectedMission}");
+                ImGui.Text($"Selected Mission Name: {x.SelectedMissionName}");
+                ImGui.Text($"Selected Mission ID: {x.SelectedMissionId}");
 
                 if (ImGui.Button("Help"))
                 {
