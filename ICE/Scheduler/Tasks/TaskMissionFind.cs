@@ -894,11 +894,11 @@ namespace ICE.Scheduler.Tasks
             {
 
                 List<uint> jobIds = [.. currentTimedBonus.Value
-                    .Select(name => MainWindow.jobOptions.FirstOrDefault(job => job.Name == name))
+                    .Select(name => MainWindowV2.jobOptions.FirstOrDefault(job => job.Name == name))
                     .Where(job => job != default)
-                    .Select(job => job.Id - 1)]; // Because MainWindow.jobOptions Id is slightly off :(
+                    .Select(job => job.Id)];
 
-                if (jobIds.Any(job => job == currentClassJob))
+                if (jobIds.Any(job => job == currentClassJob)) // Might still be the problem child... need to check upon re-write of this nightmare of a nest
                 {
                     bool hasMissionAtThisTime = TimedMissions
                         .Any(mission => currentTimedBonus.Key.start == 2 * (CosmicHelper.MissionInfoDict[mission.Id].Time - 1));

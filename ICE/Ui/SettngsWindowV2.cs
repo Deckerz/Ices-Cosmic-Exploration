@@ -112,7 +112,7 @@ internal class SettingsWindowV2 : Window
 #endif
             else
             {
-                ImGui.Text($"Empty Right Panel");
+                ImGui.Text($"Hmm... Maybe should put a dad joke here. For now it's empty.");
             }
 
             ImGui.EndChild();

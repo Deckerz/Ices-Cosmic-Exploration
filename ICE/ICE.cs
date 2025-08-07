@@ -53,9 +53,7 @@ public sealed partial class ICE : IDalamudPlugin
 
     // Window's that I use, base window to the settings... need these to actually show shit 
     internal WindowSystem windowSystem;
-    internal MainWindow mainWindow;
     internal MainWindowV2 mainWindow2;
-    internal SettingsWindow settingWindow;
     internal SettingsWindowV2 settingsWindowV2;
     internal OverlayWindow overlayWindow;
     internal DebugWindow debugWindow;
@@ -89,9 +87,7 @@ public sealed partial class ICE : IDalamudPlugin
 
         // all the windows
         windowSystem = new();
-        mainWindow = new();
         mainWindow2 = new();
-        settingWindow = new();
         settingsWindowV2 = new();
         overlayWindow = new();
         debugWindow = new();
@@ -119,7 +115,7 @@ public sealed partial class ICE : IDalamudPlugin
         };
         Svc.PluginInterface.UiBuilder.OpenConfigUi += () =>
         {
-            settingWindow.IsOpen = true;
+            settingsWindowV2.IsOpen = true;
         };
         DictionaryCreation();
         TaskGamba.EnsureGambaWeightsInitialized();
@@ -170,12 +166,6 @@ public sealed partial class ICE : IDalamudPlugin
 
         var firstArg = subcommands[0];
 
-        if (firstArg.ToLower() == "old")
-        {
-            mainWindow.IsOpen = !mainWindow.IsOpen;
-            return;
-        }
-
         if (firstArg.ToLower() == "d" || firstArg.ToLower() == "debug")
         {
             debugWindow.IsOpen = true;
@@ -183,12 +173,8 @@ public sealed partial class ICE : IDalamudPlugin
         }
         else if (firstArg.ToLower() == "s" || firstArg.ToLower() == "settings")
         {
-            settingWindow.IsOpen = !settingWindow.IsOpen;
-            return;
-        }
-        else if (firstArg.ToLower() == "s2")
-        {
             settingsWindowV2.IsOpen = !settingsWindowV2.IsOpen;
+            return;
         }
         else if (firstArg.ToLower() == "clear")
         {

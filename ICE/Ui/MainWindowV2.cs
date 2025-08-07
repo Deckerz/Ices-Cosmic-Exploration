@@ -179,7 +179,7 @@ namespace ICE.Ui
                 }
                 if (ImGui.Button("Settings", new Vector2(ImGui.GetContentRegionAvail().X, textLineHeight * 1.5f)))
                 {
-                    P.settingWindow.IsOpen = !P.settingWindow.IsOpen;
+                    P.settingsWindowV2.IsOpen = !P.settingsWindowV2.IsOpen;
                 }
 
                 if (ImGui.Checkbox($"Only grab mission", ref onlyGrabMission))
