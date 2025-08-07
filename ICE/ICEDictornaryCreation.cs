@@ -59,7 +59,7 @@ public sealed partial class ICE
 
             uint toDoValue = item.MissionToDo[0].RowId;
 
-            var todo = ToDoSheet.GetRow((uint)(toDoValue + *((byte*)wk + 0xC62)));
+            var todo = ToDoSheet.GetRow(toDoValue);
             uint missionText = todo.WKSMissionText.Value.RowId;
             var marker = MarkerSheet.GetRow(todo.Unknown13);
             uint territoryId = 1237; // TODO: Make this set the correct territoryId once new planets are added and we figure out where it is.
