@@ -55,15 +55,22 @@ namespace ICE.Scheduler.Handlers
             if (!PlayerHelper.IsInCosmicZone()) return default;
             try
             {
-                if (AddonHelper.GetAtkTextNode(Announcement, 48)->IsVisible()) // Red Alert Preparation
+                if (AddonHelper.IsAddonActive(Announcement))
                 {
-                    var description = AddonHelper.GetNodeText(Announcement, 47).ToLower();
+                    if (AddonHelper.GetAtkTextNode(Announcement, 48)->IsVisible()) // Red Alert Preparation
+                    {
+                        var description = AddonHelper.GetNodeText(Announcement, 47).ToLower();
 
-                    Dictionary<string, (JobPairs first, JobPairs second)[]>? redAlert = default;
-                    if (PlayerHelper.IsInSinusArdorum()) redAlert = sinusRedAlert; //Reassign based on Territory
+                        Dictionary<string, (JobPairs first, JobPairs second)[]>? redAlert = default;
+                        if (PlayerHelper.IsInSinusArdorum()) redAlert = sinusRedAlert; //Reassign based on Territory
 
-                    if (redAlert == default) return default;
-                    return redAlert.FirstOrDefault(location => description.Contains(location.Key));
+                        if (redAlert == default) return default;
+                        return redAlert.FirstOrDefault(location => description.Contains(location.Key));
+                    }
+                    else
+                    {
+                        return default;
+                    }
                 }
                 else
                 {

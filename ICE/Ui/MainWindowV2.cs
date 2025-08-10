@@ -158,7 +158,7 @@ namespace ICE.Ui
 
             ImGui.SetColumnWidth(0, leftPanelWidth);
 
-            if (ImGui.BeginChild("###Filter Panel", new Vector2(0, childHeight), true))
+            if (ImGui.BeginChild("Filter Panel##Filter Panel", new Vector2(0, childHeight), true))
             {
                 ImGui.PushStyleVar(ImGuiStyleVar.FrameRounding, 4.0f);
 
@@ -206,7 +206,7 @@ namespace ICE.Ui
                 {
                     ImGui.Indent(15);
                     ImGui.SetNextItemWidth(-1);
-                    if (ImGui.SliderInt("###CosmicStop", ref cosmicCap, 0, 30000))
+                    if (ImGui.SliderInt("##CosmicStop", ref cosmicCap, 0, 30000))
                     {
                         C.CosmoCreditsCap = cosmicCap;
                         C.Save();
@@ -223,7 +223,7 @@ namespace ICE.Ui
                 {
                     ImGui.Indent(15);
                     ImGui.SetNextItemWidth(-1);
-                    if (ImGui.SliderInt("###LunarStop", ref lunarCap, 0, 10000))
+                    if (ImGui.SliderInt("##LunarStop", ref lunarCap, 0, 10000))
                     {
                         C.LunarCreditsCap = lunarCap;
                         C.Save();
@@ -257,7 +257,7 @@ namespace ICE.Ui
                 {
                     ImGui.Indent(15);
                     ImGui.SetNextItemWidth(-1);
-                    if (ImGui.SliderInt("###Level", ref targetLevel, 10, 100))
+                    if (ImGui.SliderInt("##Level", ref targetLevel, 10, 100))
                     {
                         C.TargetLevel = targetLevel;
                         C.Save();
@@ -396,7 +396,7 @@ namespace ICE.Ui
             middlePanelWidth += 100;
             ImGui.SetColumnWidth(1, middlePanelWidth);
 
-            if (ImGui.BeginChild("###MissionList", new Vector2(0, childHeight), true))
+            if (ImGui.BeginChild("##MissionList", new Vector2(0, childHeight), true))
             {
 
                 if (ImGui.Checkbox("Hide Unsupported Missions", ref hideUnsupported))
@@ -597,10 +597,10 @@ namespace ICE.Ui
                     float infoSize1 = MissionInfo.Max(row => ImGui.CalcTextSize(row.Label).X) + 10;
                     float infoSize2 = MissionInfo.Max(row => ImGui.CalcTextSize(row.Value).X) + 10;
 
-                    if (ImGui.BeginTable("###DetailPanelTable", 2))
+                    if (ImGui.BeginTable("Detail##DetailPanelTable", 2))
                     {
-                        ImGui.TableSetupColumn("###Label", ImGuiTableColumnFlags.WidthFixed, infoSize1);
-                        ImGui.TableSetupColumn("###Value", ImGuiTableColumnFlags.WidthFixed, infoSize2);
+                        ImGui.TableSetupColumn("##Label", ImGuiTableColumnFlags.WidthFixed, infoSize1);
+                        ImGui.TableSetupColumn("##Value", ImGuiTableColumnFlags.WidthFixed, infoSize2);
 
                         foreach (var row in MissionInfo)
                         {
@@ -660,7 +660,7 @@ namespace ICE.Ui
 
                         var entry = C.Missions.Where(e => e.Id == selectedMission);
 
-                        ImGui.Text($"Notes:");
+                        ImGui.Text("Notes:");
                         bool hasPreviousNotes = false;
                         if (mission.Weather != CosmicWeather.FairSkies)
                         {
@@ -1203,8 +1203,6 @@ namespace ICE.Ui
 
                     if (showNotes)
                     {
-                        ImGui.NextColumn();
-                        // debug
                         ImGui.TableNextColumn();
                         bool hasPreviousNotes = false;
                         string notes = "";
@@ -1381,6 +1379,7 @@ namespace ICE.Ui
             var stage = wksManager->ResearchModule->CurrentStages[toolClassId - 1];
             var nextstate = wksManager->ResearchModule->UnlockedStages[toolClassId - 1];
 
+            // Unsure... why this is here? 
             if (Svc.Data.GetExcelSheet<WKSCosmoToolClass>().TryGetRow(toolClassId, out var row))
             {
 

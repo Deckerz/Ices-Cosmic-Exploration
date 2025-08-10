@@ -99,11 +99,11 @@ internal class SettingsWindowV2 : Window
             else if (SelectedSetting == SettingOptions[1])
                 GatherSettings();
             else if (SelectedSetting == SettingOptions[2])
-                GambaWheel();
-            else if (SelectedSetting == SettingOptions[3])
                 Overlay();
-            else if (SelectedSetting == SettingOptions[4])
+            else if (SelectedSetting == SettingOptions[3])
                 Misc();
+            else if (SelectedSetting == SettingOptions[4])
+                GambaWheel();
 #if DEBUG
             else if (SelectedSetting == DebugOptions[0])
                 Debug();

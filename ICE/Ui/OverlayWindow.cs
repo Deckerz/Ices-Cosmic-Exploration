@@ -32,7 +32,7 @@ namespace ICE.Ui
             }
 #endif
 
-                ImGuiHelpers.ScaledDummy(2);
+            ImGuiHelpers.ScaledDummy(2);
             ImGui.Separator();
             ImGuiHelpers.ScaledDummy(2);
 
