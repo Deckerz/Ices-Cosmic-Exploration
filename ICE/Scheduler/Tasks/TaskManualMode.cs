@@ -1,4 +1,6 @@
-﻿namespace ICE.Scheduler.Tasks
+﻿using static ECommons.UIHelpers.AddonMasterImplementations.AddonMaster;
+
+namespace ICE.Scheduler.Tasks
 {
     internal class TaskManualMode
     {
@@ -12,6 +14,7 @@
             {
                 SchedulerMain.State &= ~IceState.ManualMode;
             }
+            CosmicHelper.OpenStellarMission();
         }
     }
 }

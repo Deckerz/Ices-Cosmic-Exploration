@@ -300,7 +300,7 @@ namespace ICE.Scheduler.Tasks
         /// Checks to see distance to the node. If you're to far away, will pathfind to it.
         /// </summary>
         /// <param name="id"></param>
-        internal static bool? PathToNode(Vector3 nodeLoc)
+        internal static unsafe bool? PathToNode(Vector3 nodeLoc)
         {
             if (PlayerHelper.GetDistanceToPlayer(nodeLoc) > 1.5f && !P.Navmesh.IsRunning())
             {
@@ -308,15 +308,28 @@ namespace ICE.Scheduler.Tasks
                 {
                     P.Navmesh.PathfindAndMoveTo(nodeLoc, false);
                 }
-            }
-            else if (PlayerHelper.GetDistanceToPlayer(nodeLoc) < 1.5f)
-            {
-                if (P.Navmesh.IsRunning())
+                if (PlayerHelper.IsPlayerNotBusy() && !Svc.Condition[ConditionFlag.Mounted] && PlayerHelper.GetDistanceToPlayer(nodeLoc) > 20)
                 {
-                    P.Navmesh.Stop();
+                    if (EzThrottler.Throttle("Mounting onto... well mount"))
+                        ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
                 }
+            }
+            else if (PlayerHelper.GetDistanceToPlayer(nodeLoc) < 10)
+            {
+                if (Svc.Condition[ConditionFlag.Mounted])
+                {
+                    if (EzThrottler.Throttle("Getting off mount"))
+                        ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+                }
+                else if (PlayerHelper.GetDistanceToPlayer(nodeLoc) < 1.5f)
+                {
+                    if (P.Navmesh.IsRunning())
+                    {
+                        P.Navmesh.Stop();
+                    }
 
-                return true;
+                    return true;
+                }
             }
 
             return false;
