@@ -698,13 +698,21 @@ namespace ICE.Scheduler.Tasks
                 var missionConfig = C.Missions.Where(x => x.Id == mission.Key).FirstOrDefault();
                 if (missionConfig != null)
                 {
+                    var missionEntry = CosmicHelper.MissionInfoDict.Where(x => x.Key == mission.Key).FirstOrDefault();
+
                     bool IgnoreManual = C.XPRelicIgnoreManual && missionConfig.ManualMode;
                     bool IgnoreNotEnabled = C.XPRelicOnlyEnabled && !missionConfig.Enabled;
+                    bool GatheringCollectable = (missionEntry.Value.Attributes.HasFlag(MissionAttributes.Collectables) || missionEntry.Value.Attributes.HasFlag(MissionAttributes.ReducedItems))&&
+                                  missionEntry.Value.Attributes.HasFlag(MissionAttributes.Gather) &&
+                                  !missionEntry.Value.Attributes.HasFlag(MissionAttributes.Craft);
+
                     IceLogging.Debug($" - - - - - - - ");
                     IceLogging.Debug($"MissionID: {mission.Key} \n " +
-                                     $"Ignore Manual Mode: {C.XPRelicIgnoreManual} | Mission Manual Enabled: {missionConfig.ManualMode} | Skipping? {IgnoreManual} \n" +
+                                     $"\"Ignore Manual Mode:\" {C.XPRelicIgnoreManual} | Mission Manual Enabled: {missionConfig.ManualMode} | Skipping? {IgnoreManual} \n" +
                                      $"Only Enabled Mode: {C.XPRelicOnlyEnabled} | Mission is Enabled: {missionConfig.Enabled} | Skipping? {IgnoreNotEnabled}");
 
+                    if (GatheringCollectable)
+                        continue;
                     if (IgnoreManual)
                         continue;
                     if (IgnoreNotEnabled)

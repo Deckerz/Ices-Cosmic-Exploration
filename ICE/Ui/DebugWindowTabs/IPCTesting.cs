@@ -36,6 +36,19 @@ namespace ICE.Ui.DebugWindowTabs
 
                 Utils.SetGatheringRing(agent->CurrentTerritoryId, XLoc, YLoc, Radius);
             }
+            if (ImGui.Button("Pause pandora feature"))
+            {
+                string PandoraAutoInteract = "Auto-interact with Gathering Nodes";
+
+                var pAutoInteract = (P.Pandora.GetFeatureEnabled("Auto-interact with Gathering Nodes") ?? false);
+                if (pAutoInteract)
+                {
+                    if (EzThrottler.Throttle("Disabling Pandora Auto-Interact", 1000))
+                    {
+                        P.Pandora.PauseFeature("Auto-interact with Gathering Nodes", 1000);
+                    }
+                }
+            }
         }
     }
 }

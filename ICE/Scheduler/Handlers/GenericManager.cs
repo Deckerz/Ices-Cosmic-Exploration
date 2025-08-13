@@ -50,13 +50,25 @@ namespace ICE.Scheduler.Handlers
             {
                 if (SchedulerMain.State.HasFlag(IceState.Gather))
                 {
-                    var featureEnabled = (P.Pandora.GetFeatureEnabled("Pandora Quick Gather") ?? false);
+                    string PQuickGather = "Pandora Quick Gather";
+                    string PAutoInteract = "Autointeract with Gathering Nodes";
+
+                    var featureEnabled = (P.Pandora.GetFeatureEnabled(PQuickGather) ?? false);
 
                     if (featureEnabled)
                     {
-                        if (EzThrottler.Throttle("Disabling Pandora Gathering", 1000))
+                        if (EzThrottler.Throttle($"Disabling {PQuickGather}", 1000))
                         {
-                            P.Pandora.PauseFeature("Pandora Quick Gather", 1000);
+                            P.Pandora.PauseFeature(PQuickGather, 1000);
+                        }
+                    }
+
+                    var featureAutoInt = (P.Pandora.GetFeatureEnabled(PAutoInteract) ?? false);
+                    if (featureAutoInt)
+                    {
+                        if (EzThrottler.Throttle($"Disabling {PAutoInteract}", 1000))
+                        {
+                            P.Pandora.PauseFeature(PAutoInteract, 1000);
                         }
                     }
                 }
