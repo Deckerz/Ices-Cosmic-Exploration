@@ -48,6 +48,13 @@ namespace ICE.Scheduler.Tasks
             if (ECommons.GameHelpers.Player.IsBusy)
                 return false;
 
+            if (Svc.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.Mounted])
+            {
+                if (EzThrottler.Throttle("Attempting to dismount for spiritbonding"))
+                    ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+                return false;
+            }
+
             if (GenericHelpers.TryGetAddonByName("MaterializeDialog", out AtkUnitBase* addonMaterializeDialog) && GenericHelpers.IsAddonReady(addonMaterializeDialog))
             {
                 new AddonMaster.MaterializeDialog(addonMaterializeDialog).Materialize();

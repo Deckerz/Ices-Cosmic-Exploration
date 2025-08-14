@@ -38,6 +38,11 @@ namespace ICE.Scheduler.Tasks
             {
                 return true;
             }
+            else if (Svc.Condition[Dalamud.Game.ClientState.Conditions.ConditionFlag.Mounted])
+            {
+                if (EzThrottler.Throttle("Attempting to dismount for spiritbonding"))
+                    ActionManager.Instance()->UseAction(ActionType.GeneralAction, 9);
+            }
             else if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("SelectYesno", out var addon) && GenericHelpers.IsAddonReady(addon))
             {
                 if (FrameThrottler.Throttle("SelectYesnoThrottle", 300))
