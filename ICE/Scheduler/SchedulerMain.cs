@@ -97,6 +97,9 @@ namespace ICE.Scheduler
                     case var s when s.HasFlag(Craft) && s.HasFlag(ExecutingMission):
                         TaskCrafting.TryEnqueueCrafts();
                         break;
+                    case var s when s.HasFlag(ExecutingMission) && BitOperations.PopCount((ulong)s) == 1:
+                        State = ExecutingMission | Craft;
+                        break;
                     default:
                         if (C.StopOnAbort)
                             throw new Exception("Invalid state");
